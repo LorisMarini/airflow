@@ -1,18 +1,10 @@
 """
-This DAG is designed to run downstream of `dataprep`. It
-1. extracts daily parquet data on disk (one per instance)
-2. combines them into chunks of nearly similar size and loads them to GCS
-3. schedules load-jobs from GCS to BigQuery table `activities` partitioned by timestamp
+Description Here
 """
 
-from skepsi.utils.etl import task_fail_slack_alert
-
-from skepsi.dataprep.activities_pq import act_pq_extract
-from skepsi.dataprep.activities_gbq import act_gbq_ingest_all
-from skepsi.dataprep.activities_gbq import act_gbq_prepare_ingestion
-from skepsi.dataprep.activities_gbq import act_gbq_clean_temps
-
-from skepsi.utils.utils import *
+"""
+Import statements HERE
+"""
 
 # ------------------ INSTANTIATE DAG ------------------
 
@@ -20,7 +12,7 @@ default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
     'start_date': datetime(2019, 4, 15),
-    'email': ['loris@autopilothq.com'],
+    'email': ['lorenzo.marini.au@gmail.com'],
     'email_on_failure': True,
     'email_on_retry': False,
     'retries': 1,

@@ -1,24 +1,10 @@
 """
-This DAG is designed to run downstream of subscriptions dag. It
-    1. parallelizes HTTP requests to Kelp (golang service written by Denys Misko)
-       one per instance to get json data
-    2. transforms jsons into parquet and loads them to GCS
+Description Here
 """
 
-from skepsi.dataprep.activities_raw import act_raw_query_all
-from skepsi.dataprep.activities_raw import act_raw_load
-from skepsi.dataprep.activities_raw import act_raw_archive
-from skepsi.dataprep.activities_raw import act_raw_extract_expand
-
-from skepsi.dataprep.activities_pq import act_pq_from_json_all
-from skepsi.dataprep.activities_pq import act_pq_archive_load
-from skepsi.dataprep.activities_pq import clean_temps
-
-from skepsi.dataprep.etl_ids_prep import *
-from skepsi.utils.etl import task_fail_slack_alert
-
-from skepsi.utils.utils import *
-from skepsi.utils.imports import *
+"""
+Import statements HERE
+"""
 
 # ------------------ INSTANTIATE DAG ------------------
 
@@ -26,7 +12,7 @@ default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
     'start_date': datetime(2018, 12, 19),
-    'email': ['loris@autopilothq.com'],
+    'email': ['lorenzo.marini.au@gmail.com'],
     'email_on_failure': True,
     'email_on_retry': False,
     'retries': 1,
@@ -147,8 +133,19 @@ with dag:  # Parquet files
     f = clean_temps
     PO_clean_temps = PythonOperator(task_id=f.__name__, python_callable=f, provide_context=True)
 
+    # --------------------- SLACK POST --------------------------
+
+    f = post_message_to_slack
+    message = ":circleci-pass: Data pipeline completed processing."
+    slack_post_kwargs = {"message": message,
+                         "channel_type": "ALERTS",
+                         "text_type": "markdown"}
+
+    SO_end_slack = PythonOperator(task_id=f.__name__, python_callable=f, trigger_rule="all_done",
+                                  op_kwargs=slack_post_kwargs, provide_context=True)
+
     # -------------  GRAPH  -------------------
 
     DO_raw_stop_1 >> BO_pq_in_bucket >> DO_pq_skip >> DO_pq_done
     BO_pq_in_bucket >> PO_extract_activities_raw >> PO_parallel_json2engpq >> PO_activities_archive_load
-    PO_activities_archive_load >> PO_clean_temps >> DO_pq_done
+    PO_activities_archive_load >> PO_clean_temps >> DO_pq_done >> SO_end_slack

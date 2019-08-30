@@ -5,7 +5,14 @@ Airflow is an open source tool to author and schedule workflows (you can think o
 
 If you are wondering what other python-based options are available, [this doc](https://paper.dropbox.com/doc/Tooling-Workflow-Orchestration--Aj21verpo8ROSiat0UeaGkV3Ag-i7ey1rnUSEEvIQaFAcuQz) might be a starting point.
 
-## Principles
+## Warehouse
+An example of how Airflow can be used is periodically ingest data to a OLAP database. This is a high level architecture of a normalised database. The idea is to have a fact table in the centre, with foreign keys pointing to external tables containing domain specific information. Such a `normalized` structure allows to minimise data duplication (meaning that when you want to delete something sensitive there is only one place to look at).
+
+![img](star_schema.png)
+
+Check out this [doc](https://drive.google.com/file/d/1ILuw3NoVagm6aHLgFsjIImx3ZGGot6Zq/view?usp=sharing) for an idea of how such fields might be structured.
+
+## Why Airflow
 Airflow is built around four core principles:
 
   + **Transactional**: A piece of computation should either succeed or fail. You should not provision for things like “partially succeeded”.
@@ -15,7 +22,7 @@ Airflow is built around four core principles:
 
 The principle of zero-administration results from a separation of concerns. The definition of tasks in Directed Acyclic Graphs (DAGs), task scheduling, and task execution, are handled by different agents. This allows the system to scale horizontally leveraging container orchestration engines such as [kubernetes](https://kubernetes.io/). To keep in mind - vanilla Airflow is a task management tool, not a resource optimisation tool. In practice this means that in single-node applications you are responsible for balancing load and optimise resource utilisation.  
 
-## What Airflow is not
+## What Airflow IS NOT
 
 Depending on how data is collected before the transformation (T) step, ETL pipelines can be based on **batch** or **stream** processing.
 

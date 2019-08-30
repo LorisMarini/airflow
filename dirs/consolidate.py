@@ -1,4 +1,4 @@
-from skepsi.utils.utils import *
+from etl.utils.utils import *
 
 
 must_have = [env_get("ETL_HOME_TEMP_OBJECTS"),

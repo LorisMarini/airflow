@@ -1,11 +1,11 @@
 """
 This DAG is designed to perform non-periodic operations, necessary to load
-tables or asset to and from bucket and warehouse.
+tables or assets to permanent storage, or ingest them in the data warehouse.
 """
-from skepsi.records.activities import gbq_ingest_activity_type
 
-from skepsi.utils.etl import task_fail_slack_alert
-from skepsi.utils.utils import *
+"""
+Import statements HERE
+"""
 
 # ------------------ INSTANTIATE DAG ------------------
 
@@ -13,7 +13,7 @@ default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
     'start_date': datetime(2019, 4, 15),
-    'email': ['loris@autopilothq.com'],
+    'email': ['lorenzo.marini.au@gmail.com'],
     'email_on_failure': True,
     'email_on_retry': False,
     'retries': 1,
@@ -40,4 +40,3 @@ with dag:
     # ------------- DEPENDENCIES --------------
 
     DO_start >> PO_gbq_ingest_activity_type
-
