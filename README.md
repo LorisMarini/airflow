@@ -10,7 +10,7 @@ An example of how Airflow can be used is periodically ingest data to a OLAP data
 
 ![img](star_schema.png)
 
-Check out this [doc](https://drive.google.com/file/d/1ILuw3NoVagm6aHLgFsjIImx3ZGGot6Zq/view?usp=sharing) for an idea of how such fields might be structured.
+Check out this [doc](https://drive.google.com/file/d/1ILuw3NoVagm6aHLgFsjIImx3ZGGot6Zq/view?usp=sharing) for an idea of how such fields might be structured. For an example of an SQL query written for Google Big Query in Standard SQL check out `/sql_samples`
 
 ## Why Airflow
 Airflow is built around four core principles:
