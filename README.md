@@ -3,9 +3,10 @@ Welcome to Airflow!
 
 Airflow is an open source tool to author and schedule workflows (you can think of it as a much, **much better chron**). It is often used to manage batch data transformations also known as ETL - Extract Transform Load. The [project](https://github.com/apache/airflow), was originally developed by Airbnb and is written in Python 3. The managed version in GCP is called [Cloud Composer](). Not surprisingly, simplification comes at the cost of flexibility, and there are a [number of factors](https://paper.dropbox.com/doc/Cloud-Composer--Aj2xjfXGAtMaEP~LvV4uaPzoAg-q14602O2N3PoxXP3xLnlt) to be considered.
 
-If you are wondering what other options are out there, [this doc](https://paper.dropbox.com/doc/Tooling-Workflow-Orchestration--Aj21verpo8ROSiat0UeaGkV3Ag-i7ey1rnUSEEvIQaFAcuQz) might be a starting point.
+If you are wondering what other python-based options are available, [this doc](https://paper.dropbox.com/doc/Tooling-Workflow-Orchestration--Aj21verpo8ROSiat0UeaGkV3Ag-i7ey1rnUSEEvIQaFAcuQz) might be a starting point.
 
 ## Principles
+Airflow is built around four core principles:
 
   + **Transactional**: A piece of computation should either succeed or fail. You should not provision for things like “partially succeeded”.
   + **Idempotent**: When you re-run the same code for the same part of the pipeline you should get ALWAYS the same result.
@@ -16,7 +17,11 @@ The principle of zero-administration results from a separation of concerns. The 
 
 ## What Airflow is not
 
-Depending on how data is collected before the transformation (T) step, ETL pipelines can be based on **batch** or **stream** processing. Airflow is a batch processing tool, it just cannot do stream processing. While it is possible to run batch jobs every 15 minutes, even simple aggregations over larger time windows require to write additional code and are just cumbersome. If your application requires real time processing, consider using tools like [Spark Streaming](https://spark.apache.org/streaming/), [Apache Samza](http://samza.apache.org/), or [Apache Beam](https://beam.apache.org/). There is also a managed version of the latter in GCP, under the name of [Dataflow](https://cloud.google.com/dataflow/). This doc might be a good starting point.
+Depending on how data is collected before the transformation (T) step, ETL pipelines can be based on **batch** or **stream** processing.
+
+**Airflow is not** a stream processing tool. Although it is possible to run batch jobs every 15 minutes, even simple aggregations over larger time windows require to write additional code and are just cumbersome. If your application requires real time processing, consider using tools like [Spark Streaming](https://spark.apache.org/streaming/), [Apache Samza](http://samza.apache.org/), or [Apache Beam](https://beam.apache.org/). There is also a managed version of the latter in GCP, under the name of [Dataflow](https://cloud.google.com/dataflow/). This doc might be a good starting point.
+
+**Airflow is not** a language-agnostic workflow orchestration tool. It is written in python and most of the code you can run natively is python code. The bash_operator can be used to execute arbitrary code, but you still need a python environment and Airflow itself is still interpreted. If you need a language-agnostic tool, checkout [pachyderm](http://pachyderm.io/) and have a look at this [post](http://gopherdata.io/post/more_go_based_workflow_tools_in_bioinformatics/).
 
 ## DAG Orchestration
 
@@ -28,8 +33,8 @@ Airflow keeps the state of each DAG in a relational database (OLTP - Online Tran
 ## Single-Node Execution
 There are two executors available:
 
-  **SequentialExecutor**: One task at a time.
-  **LocalExecutor**: Concurrent task execution.
+  + **SequentialExecutor**: One task at a time.
+  + **LocalExecutor**: Concurrent task execution.
 
 ## Multi-Node Execution
 
@@ -39,7 +44,7 @@ When the cores on your VM are not enough to get the job done, you can scale out 
 
 Inside `airflow.cfg` or via environment variables. Variables should be named as follows:
 
-    **AIRFLOW__X__Y**
+    AIRFLOW__X__Y
 
 where X is the section of the config file in capital letters (e.g. CORE), Y is the particular parameter in capital letters (e.g. REMOTE_LOGGING), and __ is a double underscore. So to setup the SQLAlchemy string to talk to your dB of choice, the name of the env variable will be **AIRFLOW__CORE__SQL_ALCHEMY_CONN**.
 
